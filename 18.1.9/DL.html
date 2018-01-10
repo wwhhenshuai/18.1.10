@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <body>
+    <h1>登录</h1>
+        user:<input type="text" id="user1" /><br> 
+        pass:<input type="pass" id="pass1" /><br>
+        <button id="btn1">登录</button>
+        
+    </body>
+    <script>
+
+
+    btn1.onclick = function() {
+            ajax1({
+                type: "post",
+                url: "http://localhost:8000/loginin",
+                data: {
+                    user: user1.value,
+                    pass: pass1.value
+                },
+                success: function(da) {
+                    console.log(da)
+                 
+
+                 if(da!='用户名不存在'&&da!='密码错误'){
+                    window.location.href='index2.html';
+                 }else{
+                    alert('用户名或密码错误')
+                 }
+                },
+                error: function(da) {
+                    console.log(da)
+                }
+            })
+        }
+
+
+
+
+function ajax1(text) {
+
+            var xhr = new XMLHttpRequest()
+            if(text.type == "get") {
+                //这里是get
+                xhr.open('get', text.url + '?' + strUrl(text.data), true)
+                xhr.send()
+            } else {
+                //这里是post
+                xhr.open('post', text.url, true)
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+                xhr.send(strUrl(text.data))
+            }
+            xhr.onreadystatechange = function() {
+                if(xhr.readyState == 4) {
+                    if(xhr.status >= 200 && xhr.status < 300 || xhr.status == 304) {
+                        text.success(xhr.responseText)
+                    } else {
+                        text.error(xhr.status)
+                    }
+                }
+            }
+
+            function strUrl(json) {
+                var arr = []
+                for(i in json) {
+                    arr.push(i + '=' + json[i])
+                }
+                var str = arr.join('&')
+                return str
+
+            }
+        }
+        
+
+
+
+        
+    </script>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			img {
+				max-width: 200px;
+				max-height: 200px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<h1>注册</h1>
+		user: <input type="text" id="user" /><br> 
+		pass:<input type="pass" id="pass" /><br>
+		<button id="btn">注册</button>
+	</body>
+	<script>
+		
+
+		btn.onclick = function() {
+
+						ajax1({
+							type: "post",
+							url: "http://localhost:8000/loginup",
+							data: {
+								user: user.value,
+								pass: pass.value
+								// img: urlimg
+							},
+							success: function(da) {
+								console.log(da)
+								if(da=='ok'){
+									window.location.href='DL.html';
+								}else{
+									alert('用户名存在')
+								}
+							},
+							error: function(da) {
+								console.log(da)
+							}
+						})
+		 }
+
+		
+
+		function ajax(text) {
+
+			var xhr = new XMLHttpRequest()
+
+			
+			xhr.open('post', text.url, true)
+			xhr.send(text.data)
+
+			xhr.onreadystatechange = function() {
+				if(xhr.readyState == 4) {
+					if(xhr.status >= 200 && xhr.status < 300 || xhr.status == 304) {
+						text.success(xhr.responseText)
+					} else {
+						text.error(xhr.status)
+					}
+				}
+			}
+		}
+
+
+function ajax1(text) {
+
+            var xhr = new XMLHttpRequest()
+            if(text.type == "get") {
+                //这里是get
+                xhr.open('get', text.url + '?' + strUrl(text.data), true)
+                xhr.send()
+            } else {
+                //这里是post
+                xhr.open('post', text.url, true)
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+                xhr.send(strUrl(text.data))
+            }
+            xhr.onreadystatechange = function() {
+                if(xhr.readyState == 4) {
+                    if(xhr.status >= 200 && xhr.status < 300 || xhr.status == 304) {
+                        text.success(xhr.responseText)
+                    } else {
+                        text.error(xhr.status)
+                    }
+                }
+            }
+
+            function strUrl(json) {
+                var arr = []
+                for(i in json) {
+                    arr.push(i + '=' + json[i])
+                }
+                var str = arr.join('&')
+                return str
+
+            }
+        }
+		
+	</script>
+
+</html>

@@ -1,0 +1,138 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+    </head>
+    
+    <body>
+    <h1>录入</h1>
+    <input type="text" placeholder="新闻标题" id="one"><br>
+    <input type="text" placeholder="新闻内容" id="two"><br>
+    <input type="text" placeholder="发布作者" id="three"><br>
+    <input type="file" id="img" /><br> user:
+    <div id="box"></div>
+    <button id="btn">添加</button>
+    </body>
+    <script>
+    // $(function(){
+    //     $('button').click(function(){
+    //         var tit=$('#one').val();
+    //         var con=$('#two').val();
+    //         var zuo=$('#three').val();
+    //         $.ajax({
+    //         url:'http://locahost:8000/app',
+    //         type:'POST',
+    //         data:{
+    //             a:tit,
+    //             b:con,
+    //             c:zuo
+    //         },
+    //         success:function(data){
+    //             console.log(data)
+    //             // window.location.href='index.html';
+    //         }
+    //     })
+    //     })
+    // })
+    var urlimg = ''
+        img.onchange = function() {
+            var f = this.files[0]
+            var d = new FormData
+            console.log(f)
+            d.append('img', f)
+            ajax({
+                type: "post",
+                url: "http://localhost:8000/images",
+                data: d,
+                success: function(da) {
+                    urlimg = da
+                    console.log(da)
+                       box.innerHTML = `
+                    <img src="http://localhost:8000${da}"/> 
+                 `
+                },
+                error: function(da) {
+                    console.log(da)
+                }
+            })
+        }
+
+    btn.onclick = function() {
+
+            ajax1({
+                type: "post",
+                url: "http://localhost:8000/add",
+                data: {
+                    a:one.value,
+                    b:two.value,
+                    c:three.value,
+                    img: urlimg
+                },
+                success: function(da) {
+                    console.log(da)
+                    window.location.href='list.html';
+                },
+                error: function(da) {
+                    console.log(da)
+                }
+            })
+        }
+
+
+    function ajax1(text) {
+
+            var xhr = new XMLHttpRequest()
+            if(text.type == "get") {
+                //这里是get
+                xhr.open('get', text.url + '?' + strUrl(text.data), true)
+                xhr.send()
+            } else {
+                //这里是post
+                xhr.open('post', text.url, true)
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+                xhr.send(strUrl(text.data))
+            }
+            xhr.onreadystatechange = function() {
+                if(xhr.readyState == 4) {
+                    if(xhr.status >= 200 && xhr.status < 300 || xhr.status == 304) {
+                        text.success(xhr.responseText)
+                    } else {
+                        text.error(xhr.status)
+                    }
+                }
+            }
+
+            function strUrl(json) {
+                var arr = []
+                for(i in json) {
+                    arr.push(i + '=' + json[i])
+                }
+                var str = arr.join('&')
+                return str
+
+            }
+        }
+
+
+        function ajax(text) {
+
+            var xhr = new XMLHttpRequest()
+
+            
+            xhr.open('post', text.url, true)
+            xhr.send(text.data)
+
+            xhr.onreadystatechange = function() {
+                if(xhr.readyState == 4) {
+                    if(xhr.status >= 200 && xhr.status < 300 || xhr.status == 304) {
+                        text.success(xhr.responseText)
+                    } else {
+                        text.error(xhr.status)
+                    }
+                }
+            }
+        }
+
+    </script>
+</html>

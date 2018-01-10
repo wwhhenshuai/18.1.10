@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <style>
+    *{
+        margin: 0;
+        padding: 0;
+    }
+    body{
+        background:lime;
+    }
+    .id{
+        width: 600px;
+        height: 600px;
+        background:#666;
+        margin: 0 auto;
+        margin-top: 20px;
+        overflow:scroll;
+        overflow-x:hidden;
+        padding: 10px;
+    }
+        .kuai{
+            width: 500px;
+            margin: 0 auto;
+            margin-top: 20px;
+            border:2px solid white;
+        }
+        .kuai>p{
+
+        }
+    </style>
+    <body>
+    <h1>列表</h1>
+    <div id="box">
+        
+    </div>
+    <div id="tu">
+        
+    </div>
+    </body>
+    
+    <script>
+    
+    
+
+            over()          
+            function over(){
+                ajax1({
+                type: "post",
+                url: "http://localhost:8000/shuju",
+                
+                success:function(da){
+                
+                var data=eval('('+da+')')
+                console.log(data)
+                var str=''
+                for(i in data){
+                    str+=`<div class='kuai'><p>新闻标题:${data[i].name}</p><p>新闻内容:${data[i].bookname}</p><p>发布作者:${data[i].text}</p><button onclick="deletes(${data[i].uid})">删除</button></div>`
+                 }
+                 box.innerHTML=str
+               
+
+             },
+                error: function(da) {
+                    console.log(da)
+                }
+            })
+            }
+
+            function deletes(a){
+            ajax1({
+                type: "get",
+                url: "http://localhost:8000/delete",
+                data:{
+                    uid:a
+                },
+                success: function(da) {
+                    console.log(da)
+                    over()
+                },
+                error: function(da) {
+                    console.log(da)
+                }
+            })
+        }
+
+
+
+            function ajax1(text) {
+
+            var xhr = new XMLHttpRequest()
+            if(text.type == "get") {
+                //这里是get
+                xhr.open('get', text.url + '?' + strUrl(text.data), true)
+                xhr.send()
+            } else {
+                //这里是post
+                xhr.open('post', text.url, true)
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+                xhr.send(strUrl(text.data))
+            }
+            xhr.onreadystatechange = function() {
+                if(xhr.readyState == 4) {
+                    if(xhr.status >= 200 && xhr.status < 300 || xhr.status == 304) {
+                        text.success(xhr.responseText)
+                    } else {
+                        text.error(xhr.status)
+                    }
+                }
+            }
+
+            function strUrl(json) {
+                var arr = []
+                for(i in json) {
+                    arr.push(i + '=' + json[i])
+                }
+                var str = arr.join('&')
+                return str
+
+            }
+        }
+
+
+
+
+
+         function ajax(text) {
+
+            var xhr = new XMLHttpRequest()
+
+            
+            xhr.open('post', text.url, true)
+            xhr.send(text.data)
+
+            xhr.onreadystatechange = function() {
+                if(xhr.readyState == 4) {
+                    if(xhr.status >= 200 && xhr.status < 300 || xhr.status == 304) {
+                        text.success(xhr.responseText)
+                    } else {
+                        text.error(xhr.status)
+                    }
+                }
+            }
+        }
+
+    </script>
+</html>
